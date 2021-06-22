@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+</head>
+<body>
+	<form action="upload_file.php" enctype="multipart/form-data" method="POST">
+		Chọn file: <input type="file" name="uploadFile"><br> <input
+			type="submit" name="submit" value="Upload">
+	</form>
+</body>
+</html>
+
+//////////////////////
+<?php
+include_once ('connect.php');
+if (isset($_POST['submit'])) {
+  $title = $_POST["title"];
+    if ($_FILES['uploadFile']['name'] != NULL) {
+       
+        if ($_FILES['uploadFile']['type'] == "text/plain") {
+            
+           
+            $path = "uploads/"; 
+            $tmp_name = $_FILES['uploadFile']['tmp_name'];
+            $name = $_FILES['uploadFile']['name'];
+            
+            move_uploaded_file($tmp_name, $path . $name);
+                                     
+            $sql = "INSERT INTO `notes` (`id_note`,`user_id`,`title`, `body`,`date_created`) VALUES ('$id_note','$user_id','$title','$body','" . date('Y-m-d H:i:s') . "')";
+            $smt = mysqli_prepare($connect, $sql);
+            if (mysqli_stmt_execute($smt)) {
+                echo 'Tải lên thành công';
+            } else {
+                echo 'Không thể tải lên';
+            }
+        } else {
+            
+            echo "Kiểu file không phải text";
+        }
+    } else {
+        echo "Bạn chưa chọn file upload";
+    }
+}
+?>
